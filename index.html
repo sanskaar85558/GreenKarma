@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenKarma - India's AI-Powered Waste Reward Ecosystem</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b160e',
+                        darkCard: '#132317',
+                        brandGreen: '#10b981',
+                        brandYellow: '#f59e0b',
+                        brandDarkGreen: '#064e3b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .glow-hover:hover { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        
+        /* Custom CSS to precisely reproduce the token leaf logo structure */
+        .token-logo {
+            width: 44px;
+            height: 44px;
+            background-color: #d4af37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: inset 0 0 0 3px #b8860b, 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .token-leaf {
+            width: 22px;
+            height: 28px;
+            background-color: #2e7d32;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+        .leaf-stem {
+            width: 2px;
+            height: 100%;
+            background-color: #1b5e20;
+        }
+        .leaf-vein {
+            position: absolute;
+            width: 8px;
+            height: 1.5px;
+            background-color: #1b5e20;
+        }
+        .v1 { top: 6px; left: 3px; transform: rotate(-25deg); }
+        .v2 { top: 6px; right: 3px; transform: rotate(25deg); }
+        .v3 { top: 12px; left: 2px; transform: rotate(-25deg); }
+        .v4 { top: 12px; right: 2px; transform: rotate(25deg); }
+        .v5 { top: 18px; left: 3px; transform: rotate(-25deg); }
+        .v6 { top: 18px; right: 3px; transform: rotate(25deg); }
+        .leaf-spot {
+            position: absolute;
+            background-color: #b8860b;
+            border-radius: 50%;
+        }
+        .s1 { width: 3px; height: 3px; top: 3px; left: 7px; }
+        .s2 { width: 2px; height: 2px; top: 8px; left: 4px; }
+    </style>
+</head>
+<body class="bg-darkBg text-gray-100 font-sans">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full bg-darkBg/90 backdrop-blur-md border-b border-brandDarkGreen z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <!-- Rendered GreenKarma Custom Coin Logo -->
+                <div class="token-logo">
+                    <div class="token-leaf">
+                        <div class="leaf-stem"></div>
+                        <div class="leaf-vein v1"></div>
+                        <div class="leaf-vein v2"></div>
+                        <div class="leaf-vein v3"></div>
+                        <div class="leaf-vein v4"></div>
+                        <div class="leaf-vein v5"></div>
+                        <div class="leaf-vein v6"></div>
+                        <div class="leaf-spot s1"></div>
+                        <div class="leaf-spot s2"></div>
+                    </div>
+                </div>
+                <span class="text-2xl font-bold tracking-wider text-white">Green<span class="text-brandYellow">Karma</span></span>
+            </div>
+            <div class="hidden md:flex space-x-8 font-medium">
+                <a href="#challenge" class="hover:text-brandGreen transition">The Challenge</a>
+                <a href="#solution" class="hover:text-brandGreen transition">Our Solution</a>
+                <a href="#tech" class="hover:text-brandGreen transition">Infrastructure</a>
+                <a href="#impact" class="hover:text-brandGreen transition">Impact</a>
+                <a href="#roadmap" class="hover:text-brandGreen transition">Roadmap</a>
+            </div>
+            <a href="#connect" class="bg-brandGreen hover:bg-emerald-600 text-darkBg font-bold px-5 py-2 rounded-full transition glow-hover">
+                Join the Pilot
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="pt-32 pb-20 px-6 max-w-7xl mx-auto text-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.08)_0,transparent_60%)]"></div>
+        <span class="bg-brandDarkGreen text-brandGreen border border-brandGreen/30 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest inline-block mb-4">
+            INITIATIVE 2026 // PROJECT REF_ID: 1024 GK 2026
+        </span>
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-tight">
+            India's First AI-Powered <br><span class="text-brandYellow">Waste Reward Ecosystem</span>
+        </h1>
+        <p class="mt-6 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+            Empowering India's micro-segregation ecosystems through decentralized architecture, instant ledger networks, and real-time validation models.
+        </p>
+        <div class="mt-10 flex flex-wrap justify-center gap-4 text-base font-semibold">
+            <span class="flex items-center bg-darkCard px-5 py-2.5 rounded-xl border border-brandDarkGreen"><i class="fa-solid fa-recycle text-brandGreen mr-2"></i> Segregate.</span>
+            <span class="flex items-center bg-darkCard px-5 py-2.5 rounded-xl border border-brandDarkGreen"><i class="fa-solid fa-wallet text-brandYellow mr-2"></i> Earn.</span>
+            <span class="flex items-center bg-darkCard px-5 py-2.5 rounded-xl border border-brandDarkGreen"><i class="fa-solid fa-earth-americas text-emerald-400 mr-2"></i> Impact.</span>
+        </div>
+        <div class="mt-12 flex justify-center space-x-6 text-sm text-gray-400 uppercase tracking-widest">
+            <span class="flex items-center"><i class="fa-solid fa-check-circle text-brandGreen mr-1.5"></i> Blockchain Enabled</span>
+            <span class="flex items-center"><i class="fa-solid fa-shield-halved text-brandGreen mr-1.5"></i> Swachh Bharat Corp</span>
+        </div>
+    </header>
+
+    <!-- The Challenge Section -->
+    <section id="challenge" class="bg-darkCard/50 py-20 px-6 border-t border-b border-brandDarkGreen/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brandYellow text-sm font-bold uppercase tracking-wider">The Challenge</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-2">India's Waste Crisis Is Escalating</h2>
+                <p class="text-gray-400 mt-4">Every day, millions of tonnes of unsegregated garbage choke our cities, pollute our rivers, and poison our air because there is zero financial incentive for households to act.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="p-8 bg-darkCard rounded-2xl border border-brandDarkGreen/40">
+                    <div class="text-5xl font-extrabold text-brandYellow mb-2">62M</div>
+                    <div class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-3">Tonnes of Waste Annually</div>
+                    <p class="text-xs text-gray-500">Landfills are overflowing beyond safety coordinates with zero systemic traceability.</p>
+                </div>
+                <div class="p-8 bg-darkCard rounded-2xl border border-brandDarkGreen/40">
+                    <div class="text-5xl font-extrabold text-red-400 mb-2">20%</div>
+                    <div class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-3">Segregated at Source</div>
+                    <p class="text-xs text-gray-500">Recyclables are mixed with toxic wet garbage immediately, rendering secondary sorting impossible.</p>
+                </div>
+                <div class="p-8 bg-darkCard rounded-2xl border border-brandDarkGreen/40">
+                    <div class="text-5xl font-extrabold text-brandGreen mb-2">4M+</div>
+                    <div class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-3">Informal Ragpickers</div>
+                    <p class="text-xs text-gray-500">Sustaining the circular economy without structural economic inclusion or baseline protection.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Solution Section -->
+    <section id="solution" class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="text-brandGreen text-sm font-bold uppercase tracking-wider">The Solution</span>
+            <h2 class="text-3xl md:text-4xl font-bold mt-2">Meet GreenKarma: AI Reward Engine</h2>
+            <p class="text-gray-400 mt-4">An innovative eco-tech framework that directly pays citizens for sorting domestic waste at home, converting ecological duty into real, spendable utility tokens.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-6 bg-darkCard rounded-xl border border-brandDarkGreen">
+                <i class="fa-solid fa-camera text-3xl text-brandYellow mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Frictionless Capture</h3>
+                <p class="text-gray-400 text-sm">No complex smart-bins required. Fast smartphone photos are all it takes to trigger the verification funnel.</p>
+            </div>
+            <div class="p-6 bg-darkCard rounded-xl border border-brandDarkGreen">
+                <i class="fa-solid fa-brain text-3xl text-brandGreen mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">AI Segregation Verification</h3>
+                <p class="text-gray-400 text-sm">Deep learning model checks categorization parameters and filters fraud matrices automatically.</p>
+            </div>
+            <div class="p-6 bg-darkCard rounded-xl border border-brandDarkGreen">
+                <i class="fa-solid fa-bolt text-3xl text-emerald-400 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Tangible Compensation</h3>
+                <p class="text-gray-400 text-sm">Earned credits directly fund essential utility bills, metro transits, local groceries, or school fee waivers.</p>
+            </div>
+        </div>
+
+        <!-- 4 Step User Cycle -->
+        <div class="mt-20 bg-darkCard rounded-3xl p-8 md:p-12 border border-brandDarkGreen">
+            <h3 class="text-2xl font-bold text-center mb-12">Our Simple 4-Step User Cycle</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+                <div class="relative">
+                    <div class="text-4xl font-black text-brandDarkGreen mb-2">01</div>
+                    <h4 class="font-bold text-brandYellow mb-1">Photograph Waste</h4>
+                    <p class="text-xs text-gray-400">Open the GreenKarma app and snap a clean photo of your dry, wet, and hazardous bins daily.</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-black text-brandDarkGreen mb-2">02</div>
+                    <h4 class="font-bold text-brandGreen mb-1">AI Instantly Verifies</h4>
+                    <p class="text-xs text-gray-400">Our custom TensorFlow model verifies segregation quality parameters and screens duplicate entries.</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-black text-brandDarkGreen mb-2">03</div>
+                    <h4 class="font-bold text-brandYellow mb-1">Earn Green Tokens</h4>
+                    <p class="text-xs text-gray-400">Validation logs automatically trigger instant mints of green tokens into your in-app digital wallet.</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-black text-brandDarkGreen mb-2">04</div>
+                    <h4 class="font-bold text-brandGreen mb-1">Redeem Real Rewards</h4>
+                    <p class="text-xs text-gray-400">Spend token balances effortlessly on bus passes, phone recharges, grocery credit, or school waivers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section id="tech" class="bg-darkCard/30 py-20 px-6 border-t border-brandDarkGreen/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brandYellow text-sm font-bold uppercase tracking-wider">Infrastructure</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-2">Decentralized, Scalable Tech Stack</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-6 bg-darkCard rounded-xl border border-brandDarkGreen/50">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <i class="fa-solid fa-mobile-screen text-brandGreen text-xl"></i>
+                        <h4 class="font-bold">Mobile Application</h4>
+                    </div>
+                    <p class="text-xs text-gray-400"><strong class="text-gray-200">Flutter Architecture:</strong> Robust cross-platform application optimized for low data consumption and 2G connectivity.</p>
+                </div>
+                <div class="p-6 bg-darkCard rounded-xl border border-brandDarkGreen/50">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <i class="fa-solid fa-microchip text-brandYellow text-xl"></i>
+                        <h4 class="font-bold">AI Processing Engine</h4>
+                    </div>
+                    <p class="text-xs text-gray-400"><strong class="text-gray-200">TensorFlow Lite Model:</strong> Local edge processing to run rapid segregation categorization checks instantly.</p>
+                </div>
+                <div class="p-6 bg-darkCard rounded-xl border border-brandDarkGreen/50">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <i class="fa-solid fa-cubes text-brandGreen text-xl"></i>
+                        <h4 class="font-bold">Decentralized Ledger</h4>
+                    </div>
+                    <p class="text-xs text-gray-400"><strong class="text-gray-200">Polygon L2 Chain:</strong> Eco-friendly transactional network enabling lightning-fast micro-payments with minimal gas.</p>
+                </div>
+                <div class="p-6 bg-darkCard rounded-xl border border-brandDarkGreen/50">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <i class="fa-solid fa-server text-brandYellow text-xl"></i>
+                        <h4 class="font-bold">Ecosystem Backend</h4>
+                    </div>
+                    <p class="text-xs text-gray-400"><strong class="text-gray-200">Node.js & Firebase:</strong> Optimized event-driven pipelines scaling secure operations to millions of queries daily.</p>
+                </div>
+                <div class="p-6 bg-darkCard rounded-xl border border-brandDarkGreen/50">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <i class="fa-solid fa-map-location-dot text-brandGreen text-xl"></i>
+                        <h4 class="font-bold">GIS Analytical Dashboard</h4>
+                    </div>
+                    <p class="text-xs text-gray-400"><strong class="text-gray-200">React & Mapbox Integration:</strong> Real-time waste segregation mapping dashboards for partnered municipalities.</p>
+                </div>
+                <div class="p-6 bg-darkCard rounded-xl border border-brandDarkGreen/50">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <i class="fa-solid fa-id-card text-brandYellow text-xl"></i>
+                        <h4 class="font-bold">Identity Verification</h4>
+                    </div>
+                    <p class="text-xs text-gray-400"><strong class="text-gray-200">Aadhaar / Mobile OTP Sync:</strong> Strictly mapped identities preventing bot syndication and reward-loop fraud.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projections & Social Impact -->
+    <section id="impact" class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="text-brandGreen text-sm font-bold uppercase tracking-wider">Metrics & Projections</span>
+                <h2 class="text-3xl font-bold mt-2 mb-6">Projected 1M Household Impact</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1"><span>Waste Diverted (Tons/Day)</span><span class="text-brandGreen">800 T</span></div>
+                        <div class="w-full bg-darkCard h-2 rounded-full overflow-hidden"><div class="bg-brandGreen h-full w-[85%]"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1"><span>Municipal Savings (Cr/Yr)</span><span class="text-brandYellow">₹60 Cr</span></div>
+                        <div class="w-full bg-darkCard h-2 rounded-full overflow-hidden"><div class="bg-brandYellow h-full w-[70%]"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1"><span>Ragpickers Formalized</span><span class="text-brandGreen">8,000</span></div>
+                        <div class="w-full bg-darkCard h-2 rounded-full overflow-hidden"><div class="bg-brandGreen h-full w-[90%]"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1"><span>Carbon Mitigated (Tons/Yr)</span><span class="text-brandYellow">15,000 T</span></div>
+                        <div class="w-full bg-darkCard h-2 rounded-full overflow-hidden"><div class="bg-brandYellow h-full w-[75%]"></div></div>
+                    </div>
+                </div>
+
+                <div class="mt-8 grid grid-cols-2 gap-4">
+                    <div class="bg-darkCard p-4 rounded-xl border border-brandDarkGreen/40">
+                        <div class="text-2xl font-bold text-brandGreen">60%</div>
+                        <div class="text-[10px] uppercase text-gray-400 tracking-wider">User Adoption (18M)</div>
+                    </div>
+                    <div class="bg-darkCard p-4 rounded-xl border border-brandDarkGreen/40">
+                        <div class="text-2xl font-bold text-brandYellow">100%</div>
+                        <div class="text-[10px] uppercase text-gray-400 tracking-wider">Ledger Audited</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-darkCard p-8 rounded-3xl border border-brandDarkGreen">
+                <span class="text-brandYellow text-xs font-bold uppercase tracking-wider block mb-2">Social Impact</span>
+                <h3 class="text-2xl font-bold mb-4">Empowering India's Informal Force</h3>
+                <p class="text-sm text-gray-400 mb-6">Over 4 million informal waste pickers sustain India's circular economy but lack structural financial inclusion or legal identification.</p>
+                
+                <ul class="space-y-4 text-xs text-gray-300">
+                    <li class="flex items-start"><i class="fa-solid fa-user-check text-brandGreen mr-3 mt-0.5 text-base"></i> <span><strong>Formal Digital Profiles:</strong> Registered as Verified Collectors on the platform, establishing clean work profiles.</span></li>
+                    <li class="flex items-start"><i class="fa-solid fa-bell text-brandGreen mr-3 mt-0.5 text-base"></i> <span><strong>Uber-Style Pickup Alerts:</strong> Get immediate geolocation alerts of verified pre-segregated waste logs nearby.</span></li>
+                    <li class="flex items-start"><i class="fa-solid fa-file-invoice-dollar text-brandGreen mr-3 mt-0.5 text-base"></i> <span><strong>Verifiable Ledger Records:</strong> Creating transaction histories allowing integration into banking and health schemes.</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategic Framework & Revenue Section -->
+    <section class="bg-darkCard/50 py-20 px-6 border-t border-b border-brandDarkGreen/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brandYellow text-sm font-bold uppercase tracking-wider">Economics</span>
+                <h2 class="text-3xl font-bold mt-2">A Self-Sustaining Revenue Model</h2>
+                <p class="text-gray-400 text-sm mt-2">The network rewards are funded via municipal operational savings, corporate ecological mandates, and international carbon trades.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-sm mb-16">
+                <div class="p-5 bg-darkBg rounded-xl border border-brandDarkGreen">
+                    <h4 class="font-bold text-brandGreen mb-2">Municipal Logistics</h4>
+                    <p class="text-xs text-gray-400">Pre-segregated waste reduces sorting labor costs. Cities route up to 40% of operational budgets to cover reward pools.</p>
+                </div>
+                <div class="p-5 bg-darkBg rounded-xl border border-brandDarkGreen">
+                    <h4 class="font-bold text-brandYellow mb-2">EPR Credit Clearance</h4>
+                    <p class="text-xs text-gray-400">FMCG brands acquire verified high-purity recycling offset ledger entries to satisfy Extended Producer Responsibility (EPR) regulations.</p>
+                </div>
+                <div class="p-5 bg-darkBg rounded-xl border border-brandDarkGreen">
+                    <h4 class="font-bold text-brandGreen mb-2">Carbon Mitigation</h4>
+                    <p class="text-xs text-gray-400">Diverting biodegradable matter avoids methane release. These reductions are aggregated and sold globally.</p>
+                </div>
+                <div class="p-5 bg-darkBg rounded-xl border border-brandDarkGreen">
+                    <h4 class="font-bold text-brandYellow mb-2">CSR & Public Budgets</h4>
+                    <p class="text-xs text-gray-400">Corporate sponsors map Swachh Bharat mission allocations directly to subsidize transit and digital utility vouchers.</p>
+                </div>
+            </div>
+
+            <!-- Target Framework Table -->
+            <div class="overflow-x-auto bg-darkCard rounded-2xl border border-brandDarkGreen">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-brandDarkGreen bg-brandDarkGreen/30 text-brandYellow uppercase tracking-wider font-bold">
+                            <th class="p-4">Target Framework</th>
+                            <th class="p-4">Institutional Lead</th>
+                            <th class="p-4">Strategic Fit / Objective Alignment</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-brandDarkGreen/30 text-gray-300">
+                        <tr>
+                            <td class="p-4 font-bold text-white">Smart India Hackathon</td>
+                            <td class="p-4">Ministry of Education</td>
+                            <td class="p-4 text-gray-400">National academic deployment; tech feedback loops from key developers.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-white">Swachh Bharat Innovation</td>
+                            <td class="p-4">Ministry of Housing & Urban Affairs</td>
+                            <td class="p-4 text-gray-400">Pilot program execution grants with tier-2 smart city urban local bodies.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-white">Google for Startups India</td>
+                            <td class="p-4">Google Startup Mentors</td>
+                            <td class="p-4 text-gray-400">Cloud credit allocation to host complex machine learning frameworks.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-white">Atal Innovation Mission (AIM)</td>
+                            <td class="p-4">NITI Aayog Support</td>
+                            <td class="p-4 text-gray-400">Regulatory sandbox clearances and interstate deployment coordinates.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-white">UN Earth Champions</td>
+                            <td class="p-4">United Nations Program</td>
+                            <td class="p-4 text-gray-400">Global ecosystem scale awareness and $15,000 validation credits.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="text-brandGreen text-sm font-bold uppercase tracking-wider">Strategy</span>
+            <h2 class="text-3xl font-bold mt-2">Phased National Execution Roadmap</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-darkCard p-6 rounded-xl border border-brandDarkGreen relative">
+                <span class="absolute top-4 right-4 text-xs font-bold text-brandYellow bg-brandDarkGreen px-2 py-0.5 rounded">M 1-3</span>
+                <div class="text-xs uppercase text-gray-400 font-bold mb-1">Phase 1</div>
+                <h4 class="font-bold text-white text-base mb-3">Pilot Setup</h4>
+                <p class="text-xs text-gray-400">WhatsApp-based MVP targeting 500 households in pilot colonies. Manual validation structure and recharge vouchers to test core loops.</p>
+            </div>
+            <div class="bg-darkCard p-6 rounded-xl border border-brandDarkGreen relative">
+                <span class="absolute top-4 right-4 text-xs font-bold text-brandGreen bg-brandDarkGreen px-2 py-0.5 rounded">M 4-6</span>
+                <div class="text-xs uppercase text-gray-400 font-bold mb-1">Phase 2</div>
+                <h4 class="font-bold text-white text-base mb-3">Tech Rollout</h4>
+                <p class="text-xs text-gray-400">Native Flutter app release with embedded edge TensorFlow Lite waste classifier and Polygon smart contracts for instant minting.</p>
+            </div>
+            <div class="bg-darkCard p-6 rounded-xl border border-brandDarkGreen relative">
+                <span class="absolute top-4 right-4 text-xs font-bold text-brandYellow bg-brandDarkGreen px-2 py-0.5 rounded">M 7-12</span>
+                <div class="text-xs uppercase text-gray-400 font-bold mb-1">Phase 3</div>
+                <h4 class="font-bold text-white text-base mb-3">City Scale</h4>
+                <p class="text-xs text-gray-400">Partnering with Tier-1 Urban bodies to scale up to 50,000 homes. Complete integration of informal collector registry and GPS maps.</p>
+            </div>
+            <div class="bg-darkCard p-6 rounded-xl border border-brandDarkGreen relative">
+                <span class="absolute top-4 right-4 text-xs font-bold text-brandGreen bg-brandDarkGreen px-2 py-0.5 rounded">Year 2+</span>
+                <div class="text-xs uppercase text-gray-400 font-bold mb-1">Phase 4</div>
+                <h4 class="font-bold text-white text-base mb-3">National Scale</h4>
+                <p class="text-xs text-gray-400">White-labeled solutions for 10 key smart cities. Official partnership with Swachh Bharat Mission and global carbon certification.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Action Funnel Section -->
+    <section id="connect" class="bg-gradient-to-b from-darkBg to-brandDarkGreen/40 py-20 px-6 border-t border-brandDarkGreen">
+        <div class="max-w-4xl mx-auto text-center">
+            <span class="text-brandYellow text-xs font-bold uppercase tracking-wider block mb-2">[INVITATION_CORE]</span>
+            <h2 class="text-4xl font-extrabold mb-6">Join the GreenKarma Revolution</h2>
+            <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                "Small micro-actions taken consistently by millions of citizens yield exponential, country-wide impact." Every single piece of sorted waste is a vote for a clean planet.
+            </p>
+            
+            <div class="bg-darkBg/80 p-8 rounded-2xl border border-brandGreen/30 text-left max-w-xl mx-auto mb-8">
+                <h4 class="font-bold text-brandYellow mb-2 text-center">Start the Pilot Today →</h4>
+                <p class="text-xs text-gray-400 text-center mb-6">Deploy GreenKarma micro-segregation layers inside your local communities, corporate spaces, or municipalities.</p>
+                <form class="space-y-3" onsubmit="event.preventDefault(); alert('Partnership inquiry submitted simulation!');">
+                    <input type="text" placeholder="Your Name / Organization" class="w-full bg-darkCard border border-brandDarkGreen p-2.5 rounded-lg text-xs focus:outline-none focus:border-brandGreen" required>
+                    <input type="email" placeholder="Email Address" class="w-full bg-darkCard border border-brandDarkGreen p-2.5 rounded-lg text-xs focus:outline-none focus:border-brandGreen" required>
+                    <button class="w-full bg-brandGreen hover:bg-emerald-600 text-darkBg font-bold py-2.5 rounded-lg text-xs uppercase transition tracking-wider">Submit Inquiry</button>
+                </form>
+            </div>
+
+            <div class="text-xs text-gray-400 space-y-1">
+                <div>CONNECT: <span class="text-white font-mono">hello@greenkarma.in</span> // <span class="text-white font-mono">greenkarma.in</span></div>
+                <div class="tracking-widest uppercase pt-4 text-[10px] text-gray-500">Partnership Inquiries 2026 // Swachh Bharat AI Webs</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-darkBg py-8 text-center text-xs text-gray-600 border-t border-brandDarkGreen/20">
+        <p>&copy; 2026 GreenKarma Ecosystem. All rights dedicated to micro-segregation framework architecture scales.</p>
+    </footer>
+
+</body>
+</html>

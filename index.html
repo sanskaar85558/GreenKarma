@@ -8,6 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- TensorFlow.js and MobileNet model libraries for AI validation -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -99,6 +102,7 @@
             <div class="hidden md:flex space-x-8 font-medium">
                 <a href="#challenge" class="hover:text-brandGreen transition">The Challenge</a>
                 <a href="#solution" class="hover:text-brandGreen transition">Our Solution</a>
+                <a href="#ai-scanner" class="hover:text-brandGreen transition">AI Scanner</a>
                 <a href="#tech" class="hover:text-brandGreen transition">Infrastructure</a>
                 <a href="#impact" class="hover:text-brandGreen transition">Impact</a>
                 <a href="#roadmap" class="hover:text-brandGreen transition">Roadmap</a>
@@ -131,6 +135,49 @@
             <span class="flex items-center"><i class="fa-solid fa-shield-halved text-brandGreen mr-1.5"></i> Swachh Bharat Corp</span>
         </div>
     </header>
+
+    <!-- Interactive AI Scanner Tool -->
+    <section id="ai-scanner" class="py-16 px-6 max-w-4xl mx-auto text-center bg-darkCard rounded-3xl border border-brandGreen/40 shadow-xl mb-20">
+        <span class="text-brandYellow text-xs font-bold uppercase tracking-wider block mb-2">Live Tech Preview</span>
+        <h2 class="text-3xl font-bold mb-4">Real-Time Waste Validation Portal</h2>
+        <p class="text-gray-400 text-sm mb-8 max-w-xl mx-auto">
+            Test our custom validation model directly through your browser. Grant camera access, place a waste object in frame, and click validate.
+        </p>
+
+        <!-- Camera Area -->
+        <div class="relative max-w-md mx-auto aspect-video bg-black rounded-xl border-2 border-brandDarkGreen overflow-hidden flex items-center justify-center">
+            <video id="webcam" autoplay playsinline muted class="w-full h-full object-cover hidden"></video>
+            <div id="cameraPlaceholder" class="text-center p-4">
+                <i class="fa-solid fa-camera text-4xl text-gray-600 mb-2"></i>
+                <p class="text-xs text-gray-500">Camera stream inactive</p>
+            </div>
+            <!-- Loading overlay -->
+            <div id="loadingOverlay" class="absolute inset-0 bg-darkBg/90 flex flex-col items-center justify-center hidden">
+                <i class="fa-solid fa-circle-notch fa-spin text-brandGreen text-3xl mb-2"></i>
+                <p class="text-xs text-gray-400">Loading AI Validation Engine...</p>
+            </div>
+        </div>
+
+        <!-- Diagnostics Output Box -->
+        <div id="resultBox" class="mt-6 p-4 bg-darkBg rounded-xl border border-brandDarkGreen max-w-md mx-auto hidden text-left">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-brandYellow mb-2">AI Assessment Logs</h4>
+            <p class="text-sm font-semibold text-white mb-1">Detected Target: <span id="detectedObject" class="text-brandGreen">None</span></p>
+            <p class="text-xs text-gray-400 mb-3">Model Certainty Matrix: <span id="confidenceScore">0%</span></p>
+            <div id="validationBadge" class="inline-block text-xs font-bold uppercase px-3 py-1 rounded-full">
+                Checking Parameters...
+            </div>
+        </div>
+
+        <!-- Scanner Control Interface Buttons -->
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+            <button id="startCamBtn" onclick="initiateCamera()" class="bg-brandDarkGreen hover:bg-emerald-950 text-brandGreen font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition border border-brandGreen/30">
+                <i class="fa-solid fa-power-off mr-2"></i>Initialize Camera
+            </button>
+            <button id="validateBtn" onclick="runAIValidation()" disabled class="bg-brandGreen disabled:bg-gray-700 disabled:text-gray-400 text-darkBg font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition glow-hover">
+                <i class="fa-solid fa-circle-check mr-2"></i>Validate Segregation
+            </button>
+        </div>
+    </section>
 
     <!-- The Challenge Section -->
     <section id="challenge" class="bg-darkCard/50 py-20 px-6 border-t border-b border-brandDarkGreen/50">
@@ -458,5 +505,84 @@
         <p>&copy; 2026 GreenKarma Ecosystem. All rights dedicated to micro-segregation framework architecture scales.</p>
     </footer>
 
+    <!-- JavaScript logic handling TensorFlow model loading and camera processing loop -->
+    <script>
+        let videoElement = document.getElementById('webcam');
+        let placeholder = document.getElementById('cameraPlaceholder');
+        let loadingOverlay = document.getElementById('loadingOverlay');
+        let validateBtn = document.getElementById('validateBtn');
+        let resultBox = document.getElementById('resultBox');
+        let objectLabel = document.getElementById('detectedObject');
+        let scoreLabel = document.getElementById('confidenceScore');
+        let badge = document.getElementById('validationBadge');
+        let aiModel = null;
+
+        // Keywords representing recyclable materials vs organic items
+        const dryRecyclables = ['bottle', 'can', 'box', 'paper', 'cardboard', 'cup', 'plastic', 'glass', 'packet', 'wrapper'];
+        const wetOrganics = ['banana', 'apple', 'orange', 'fruit', 'vegetable', 'food', 'bread', 'meat'];
+
+        async function initiateCamera() {
+            loadingOverlay.classList.remove('hidden');
+            try {
+                // Instantiates MobileNet image classification model inside browser execution threads
+                if (!aiModel) {
+                    aiModel = await mobilenet.load();
+                }
+                
+                const streams = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' }, 
+                    audio: false 
+                });
+                
+                videoElement.srcObject = streams;
+                videoElement.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                validateBtn.disabled = false;
+            } catch (err) {
+                alert("Camera initialization failed: Please grant hardware stream access privileges.");
+                console.error(err);
+            } finally {
+                loadingOverlay.classList.add('hidden');
+            }
+        }
+
+        async function runAIValidation() {
+            if (!aiModel) return;
+            
+            resultBox.classList.remove('hidden');
+            badge.className = "inline-block text-xs font-bold uppercase px-3 py-1 rounded-full bg-gray-600 text-white";
+            badge.innerText = "Analyzing Frames...";
+
+            // Extracts single video frame canvas matrix array to test against deep learning classifiers
+            const predictions = await aiModel.classify(videoElement);
+            
+            if (predictions && predictions.length > 0) {
+                const primaryMatch = predictions[0];
+                const cleanName = primaryMatch.className.toLowerCase();
+                const scorePercentage = Math.round(primaryMatch.probability * 100);
+
+                objectLabel.innerText = primaryMatch.className.split(',')[0];
+                scoreLabel.innerText = scorePercentage + "%";
+
+                // Evaluates object properties against sorting classifications
+                let isDry = dryRecyclables.some(keyword => cleanName.includes(keyword));
+                let isWet = wetOrganics.some(keyword => cleanName.includes(keyword));
+
+                if (isDry) {
+                    badge.className = "inline-block text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500 text-black";
+                    badge.innerText = "VALIDATED: Correctly Sorted Dry Recyclable";
+                } else if (isWet) {
+                    badge.className = "inline-block text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500 text-black";
+                    badge.innerText = "VALIDATED: Correctly Sorted Wet Organic";
+                } else {
+                    badge.className = "inline-block text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500 text-white";
+                    badge.innerText = "FAILED: Unidentified / Mix Material Detected";
+                }
+            } else {
+                badge.className = "inline-block text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500 text-white";
+                badge.innerText = "ERROR: Frame scanning context lost.";
+            }
+        }
+    </script>
 </body>
 </html>

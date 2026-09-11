@@ -80,7 +80,7 @@
 <body class="bg-darkBg text-gray-100 font-sans">
 
     <!-- Navbar -->
-    <nav class="fixed top-0 w-full bg-darkBg/90 backdrop-blur-md border-b border-brandDarkGreen z-50 px-6 py-4">
+    <nav class="fixed top-0 w-full bg-darkBg/90 backdrop-blur-md border-b border-brandDarkGreen z-40 px-6 py-4">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <!-- Rendered GreenKarma Custom Coin Logo -->
@@ -107,9 +107,13 @@
                 <a href="#impact" class="hover:text-brandGreen transition">Impact</a>
                 <a href="#roadmap" class="hover:text-brandGreen transition">Roadmap</a>
             </div>
-            <a href="#connect" class="bg-brandGreen hover:bg-emerald-600 text-darkBg font-bold px-5 py-2 rounded-full transition glow-hover">
-                Join the Pilot
-            </a>
+            
+            <!-- Dynamic Authentication Button and Dashboard Link -->
+            <div id="nav-auth-container" class="flex items-center space-x-4">
+                <button onclick="openLoginModal()" class="bg-brandGreen hover:bg-emerald-600 text-darkBg font-bold px-5 py-2 rounded-full transition glow-hover">
+                    Join the Pilot
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -141,15 +145,16 @@
         <span class="text-brandYellow text-xs font-bold uppercase tracking-wider block mb-2">Live Tech Preview</span>
         <h2 class="text-3xl font-bold mb-4">Real-Time Waste Validation Portal</h2>
         <p class="text-gray-400 text-sm mb-8 max-w-xl mx-auto">
-            Test our custom validation model directly through your browser. Grant camera access, place a waste object in frame, and click validate.
+            Test our custom validation model directly through your browser. Grant camera access or upload an image, place a waste object in frame, and click validate.
         </p>
 
-        <!-- Camera Area -->
+        <!-- Camera / Asset Area -->
         <div class="relative max-w-md mx-auto aspect-video bg-black rounded-xl border-2 border-brandDarkGreen overflow-hidden flex items-center justify-center">
             <video id="webcam" autoplay playsinline muted class="w-full h-full object-cover hidden"></video>
+            <img id="staticImagePreview" class="w-full h-full object-contain hidden" alt="Image preview">
             <div id="cameraPlaceholder" class="text-center p-4">
                 <i class="fa-solid fa-camera text-4xl text-gray-600 mb-2"></i>
-                <p class="text-xs text-gray-500">Camera stream inactive</p>
+                <p class="text-xs text-gray-500">Camera stream inactive or file not uploaded</p>
             </div>
             <!-- Loading overlay -->
             <div id="loadingOverlay" class="absolute inset-0 bg-darkBg/90 flex flex-col items-center justify-center hidden">
@@ -158,22 +163,45 @@
             </div>
         </div>
 
-        <!-- Diagnostics Output Box -->
-        <div id="resultBox" class="mt-6 p-4 bg-darkBg rounded-xl border border-brandDarkGreen max-w-md mx-auto hidden text-left">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-brandYellow mb-2">AI Assessment Logs</h4>
-            <p class="text-sm font-semibold text-white mb-1">Detected Target: <span id="detectedObject" class="text-brandGreen">None</span></p>
-            <p class="text-xs text-gray-400 mb-3">Model Certainty Matrix: <span id="confidenceScore">0%</span></p>
-            <div id="validationBadge" class="inline-block text-xs font-bold uppercase px-3 py-1 rounded-full">
-                Checking Parameters...
+        <!-- Dynamic Diagnostics Dashboard -->
+        <div id="resultBox" class="mt-6 p-5 bg-darkBg rounded-xl border border-brandDarkGreen max-w-md mx-auto hidden text-left">
+            <div class="flex justify-between items-center border-b border-brandDarkGreen/50 pb-2 mb-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-brandYellow">AI Diagnostic Matrix</h4>
+                <div id="validationBadge" class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-gray-600 text-white">
+                    Processing
+                </div>
+            </div>
+            
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-400">Primary Candidate:</span>
+                    <span id="detectedObject" class="text-white font-semibold">None</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-400">Certainty Level:</span>
+                    <span id="confidenceScore" class="text-brandGreen font-semibold">0%</span>
+                </div>
+            </div>
+
+            <!-- Detailed top candidates analysis breakdown -->
+            <div class="border-t border-brandDarkGreen/30 pt-3">
+                <h5 class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Confidence Matrix Profiles</h5>
+                <div id="topCandidatesList" class="space-y-1.5 text-xs text-gray-400">
+                    <!-- Dynamic Rows Added by JS -->
+                </div>
             </div>
         </div>
 
-        <!-- Scanner Control Interface Buttons -->
+        <!-- Scanner Controls -->
         <div class="mt-8 flex flex-wrap justify-center gap-4">
-            <button id="startCamBtn" onclick="initiateCamera()" class="bg-brandDarkGreen hover:bg-emerald-950 text-brandGreen font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition border border-brandGreen/30">
-                <i class="fa-solid fa-power-off mr-2"></i>Initialize Camera
+            <button id="startCamBtn" onclick="initiateCamera()" class="bg-brandDarkGreen hover:bg-emerald-950 text-brandGreen font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-xl transition border border-brandGreen/30">
+                <i class="fa-solid fa-camera mr-2"></i>Use Camera
             </button>
-            <button id="validateBtn" onclick="runAIValidation()" disabled class="bg-brandGreen disabled:bg-gray-700 disabled:text-gray-400 text-darkBg font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition glow-hover">
+            <label class="bg-darkBg hover:bg-neutral-900 text-gray-300 font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-xl transition border border-brandDarkGreen cursor-pointer flex items-center">
+                <i class="fa-solid fa-file-arrow-up mr-2 text-brandYellow"></i>Upload Image
+                <input type="file" id="imageUploadInput" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
+            </label>
+            <button id="validateBtn" onclick="runAIValidation()" disabled class="bg-brandGreen disabled:bg-gray-700 disabled:text-gray-400 text-darkBg font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-xl transition glow-hover">
                 <i class="fa-solid fa-circle-check mr-2"></i>Validate Segregation
             </button>
         </div>
@@ -505,30 +533,291 @@
         <p>&copy; 2026 GreenKarma Ecosystem. All rights dedicated to micro-segregation framework architecture scales.</p>
     </footer>
 
-    <!-- JavaScript logic handling TensorFlow model loading and camera processing loop -->
+
+    <!-- ================= AUTH & LOGIN MODAL ================= -->
+    <div id="loginModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-darkCard border border-brandGreen/30 max-w-md w-full mx-4 rounded-3xl p-8 relative shadow-2xl transform scale-95 transition-transform duration-300" id="loginModalContent">
+            <!-- Close Button -->
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="text-center mb-6">
+                <div class="flex justify-center mb-3">
+                    <div class="token-logo">
+                        <div class="token-leaf">
+                            <div class="leaf-stem"></div>
+                            <div class="leaf-vein v1"></div>
+                            <div class="leaf-vein v2"></div>
+                            <div class="leaf-vein v3"></div>
+                            <div class="leaf-vein v4"></div>
+                            <div class="leaf-vein v5"></div>
+                            <div class="leaf-vein v6"></div>
+                        </div>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-white">Welcome to <span class="text-brandGreen">GreenKarma</span></h3>
+                <p class="text-gray-400 text-xs mt-1">Access your Decentralized Waste Ledger & Wallet</p>
+            </div>
+
+            <!-- SSO Federated Buttons -->
+            <div class="space-y-3 mb-6">
+                <button onclick="simulateSSOLogin('Google')" class="w-full flex items-center justify-center space-x-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold py-3 px-4 rounded-xl transition shadow-md">
+                    <i class="fa-brands fa-google text-lg text-red-500"></i>
+                    <span class="text-sm">Sign in with Google</span>
+                </button>
+                <button onclick="simulateSSOLogin('Apple')" class="w-full flex items-center justify-center space-x-3 bg-black hover:bg-zinc-900 text-white font-semibold py-3 px-4 rounded-xl border border-zinc-700 transition shadow-md">
+                    <i class="fa-brands fa-apple text-lg"></i>
+                    <span class="text-sm">Sign in with Apple</span>
+                </button>
+            </div>
+
+            <!-- Divider line -->
+            <div class="flex items-center my-4">
+                <div class="flex-grow h-[1px] bg-brandDarkGreen/50"></div>
+                <span class="px-3 text-xs text-gray-500 uppercase font-bold tracking-widest">or secure credentials</span>
+                <div class="flex-grow h-[1px] bg-brandDarkGreen/50"></div>
+            </div>
+
+            <!-- Internal Email/Phone form -->
+            <div class="mb-4">
+                <div class="flex bg-darkBg border border-brandDarkGreen rounded-xl p-1 mb-4 text-xs font-semibold">
+                    <button id="tab-phone" onclick="switchAuthTab('phone')" class="w-1/2 text-center py-2 rounded-lg text-brandGreen bg-brandDarkGreen/30 transition">
+                        Phone Number
+                    </button>
+                    <button id="tab-email" onclick="switchAuthTab('email')" class="w-1/2 text-center py-2 rounded-lg text-gray-400 hover:text-white transition">
+                        Email Address
+                    </button>
+                </div>
+
+                <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                    <!-- Phone Input Block -->
+                    <div id="auth-phone-block" class="space-y-1">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-gray-400">Mobile Number</label>
+                        <div class="relative flex items-center">
+                            <span class="absolute left-3 text-sm text-gray-400 font-semibold">+91</span>
+                            <input type="tel" id="auth-phone" placeholder="98765 43210" class="w-full bg-darkBg border border-brandDarkGreen py-3 pl-12 pr-4 rounded-xl text-sm focus:outline-none focus:border-brandGreen transition font-semibold" pattern="[6789][0-9]{9}">
+                        </div>
+                    </div>
+
+                    <!-- Email Input Block -->
+                    <div id="auth-email-block" class="space-y-1 hidden">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-gray-400">Email Address</label>
+                        <input type="email" id="auth-email" placeholder="name@domain.com" class="w-full bg-darkBg border border-brandDarkGreen py-3 px-4 rounded-xl text-sm focus:outline-none focus:border-brandGreen transition font-semibold">
+                    </div>
+
+                    <!-- Verification Block (Simulated OTP / Password) -->
+                    <div class="space-y-1">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-gray-400">Security PIN / OTP</label>
+                        <input type="password" id="auth-otp" placeholder="••••" maxlength="4" class="w-full bg-darkBg border border-brandDarkGreen py-3 px-4 rounded-xl text-sm tracking-widest text-center focus:outline-none focus:border-brandGreen transition font-semibold">
+                    </div>
+
+                    <button type="submit" class="w-full bg-brandGreen hover:bg-emerald-600 text-darkBg font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider transition glow-hover mt-4">
+                        Validate Credentials & Connect
+                    </button>
+                </form>
+            </div>
+            <p class="text-[10px] text-gray-500 text-center mt-4">Protected by Aadhaar Sync Protocols & Polygon Layer-2 verification keys.</p>
+        </div>
+    </div>
+
+
+    <!-- JavaScript logic handling Auth states, TensorFlow predictions, and diagnostics -->
     <script>
         let videoElement = document.getElementById('webcam');
         let placeholder = document.getElementById('cameraPlaceholder');
+        let staticPreview = document.getElementById('staticImagePreview');
         let loadingOverlay = document.getElementById('loadingOverlay');
         let validateBtn = document.getElementById('validateBtn');
         let resultBox = document.getElementById('resultBox');
+        
         let objectLabel = document.getElementById('detectedObject');
         let scoreLabel = document.getElementById('confidenceScore');
         let badge = document.getElementById('validationBadge');
+        let topCandidatesContainer = document.getElementById('topCandidatesList');
+        
         let aiModel = null;
+        let activeInputStream = null; // 'webcam' or 'upload'
+        let uploadedImageElement = null; // Stored HTMLImageElement for fallback analysis
 
-        // Keywords representing recyclable materials vs organic items
-        const dryRecyclables = ['bottle', 'can', 'box', 'paper', 'cardboard', 'cup', 'plastic', 'glass', 'packet', 'wrapper'];
-        const wetOrganics = ['banana', 'apple', 'orange', 'fruit', 'vegetable', 'food', 'bread', 'meat'];
+        // App User State
+        let currentUser = null;
+        let walletBalance = 0;
+
+        // Expanded waste taxonomy optimized for generic MobileNet classification output
+        // Dry recyclables (paper, plastic, metal, cardboard)
+        const dryRecyclables = [
+            'bottle', 'can', 'box', 'paper', 'cardboard', 'cup', 'plastic', 'glass', 'packet', 'wrapper', 
+            'container', 'tin', 'newspaper', 'carton', 'envelope', 'magazine', 'metal', 'foil', 'jar', 'jug', 
+            'plate', 'tray', 'bucket', 'tub', 'crate', 'ashtray', 'beaker', 'flask', 'goblet'
+        ];
+
+        // Wet organics (biodegradable food items, natural plant waste)
+        const wetOrganics = [
+            'banana', 'apple', 'orange', 'fruit', 'vegetable', 'food', 'bread', 'meat', 'peel', 'leaf', 'leaves', 
+            'plant', 'flower', 'egg', 'potato', 'tomato', 'onion', 'coffee', 'tea', 'lemon', 'lime', 'pineapple', 
+            'pomegranate', 'custard', 'fig', 'strawberry', 'nut', 'mushroom', 'corn', 'broccoli', 'cabbage'
+        ];
+
+        // Hazardous / E-waste classification
+        const hazardousWaste = [
+            'battery', 'cell', 'phone', 'wire', 'cable', 'charger', 'bulb', 'tube', 'led', 'plug', 'spray', 
+            'paint', 'chemical', 'medicine', 'pill', 'syringe', 'computer', 'mouse', 'keyboard', 'device', 
+            'screen', 'monitor', 'hardware'
+        ];
+
+        // Page Load Initializations
+        window.onload = function() {
+            checkLocalSession();
+        };
+
+        // Initialize User States
+        function checkLocalSession() {
+            const savedUser = localStorage.getItem('gk_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                walletBalance = parseInt(localStorage.getItem('gk_balance')) || 45;
+                renderNavProfile();
+            }
+        }
+
+        /* --- AUTHENTICATION MODULE --- */
+        let currentAuthTab = 'phone';
+
+        function openLoginModal() {
+            const modal = document.getElementById('loginModal');
+            const content = document.getElementById('loginModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            const content = document.getElementById('loginModalContent');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function switchAuthTab(tab) {
+            currentAuthTab = tab;
+            const btnPhone = document.getElementById('tab-phone');
+            const btnEmail = document.getElementById('tab-email');
+            const blockPhone = document.getElementById('auth-phone-block');
+            const blockEmail = document.getElementById('auth-email-block');
+
+            if (tab === 'phone') {
+                btnPhone.className = "w-1/2 text-center py-2 rounded-lg text-brandGreen bg-brandDarkGreen/30 transition";
+                btnEmail.className = "w-1/2 text-center py-2 rounded-lg text-gray-400 hover:text-white transition";
+                blockPhone.classList.remove('hidden');
+                blockEmail.classList.add('hidden');
+            } else {
+                btnEmail.className = "w-1/2 text-center py-2 rounded-lg text-brandGreen bg-brandDarkGreen/30 transition";
+                btnPhone.className = "w-1/2 text-center py-2 rounded-lg text-gray-400 hover:text-white transition";
+                blockEmail.classList.remove('hidden');
+                blockPhone.classList.add('hidden');
+            }
+        }
+
+        function simulateSSOLogin(provider) {
+            currentUser = {
+                name: provider === 'Google' ? 'Sanskaar Sharma' : 'Sanskaar S.',
+                email: provider === 'Google' ? 'sanskaar@gmail.com' : 'sanskaar@apple.id',
+                avatar: provider === 'Google' ? 'G' : ''
+            };
+            finalizeLogin();
+        }
+
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            const identifier = currentAuthTab === 'phone' 
+                ? "+91 " + document.getElementById('auth-phone').value 
+                : document.getElementById('auth-email').value;
+            
+            currentUser = {
+                name: currentAuthTab === 'phone' ? 'User ' + identifier.slice(-4) : identifier.split('@')[0],
+                email: identifier,
+                avatar: 'U'
+            };
+            finalizeLogin();
+        }
+
+        function finalizeLogin() {
+            localStorage.setItem('gk_user', JSON.stringify(currentUser));
+            if (!localStorage.getItem('gk_balance')) {
+                localStorage.setItem('gk_balance', '45');
+                walletBalance = 45;
+            } else {
+                walletBalance = parseInt(localStorage.getItem('gk_balance'));
+            }
+            renderNavProfile();
+            closeLoginModal();
+        }
+
+        function renderNavProfile() {
+            const container = document.getElementById('nav-auth-container');
+            container.innerHTML = `
+                <div class="flex items-center space-x-3 bg-darkCard border border-brandDarkGreen/60 px-4 py-2 rounded-full">
+                    <div class="flex items-center space-x-1.5 mr-2">
+                        <i class="fa-solid fa-leaf text-brandGreen text-sm"></i>
+                        <span class="text-xs font-mono font-bold text-gray-200">BAL:</span>
+                        <span id="nav-wallet-balance" class="text-xs font-mono font-bold text-brandYellow">${walletBalance} GK</span>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-brandDarkGreen border border-brandGreen/50 flex items-center justify-center text-xs font-bold text-brandGreen select-none cursor-pointer" onclick="logoutSession()">
+                        ${currentUser.avatar}
+                    </div>
+                </div>
+            `;
+        }
+
+        function logoutSession() {
+            if (confirm("Disconnect wallet and log out?")) {
+                localStorage.removeItem('gk_user');
+                currentUser = null;
+                document.getElementById('nav-auth-container').innerHTML = `
+                    <button onclick="openLoginModal()" class="bg-brandGreen hover:bg-emerald-600 text-darkBg font-bold px-5 py-2 rounded-full transition glow-hover">
+                        Join the Pilot
+                    </button>
+                `;
+            }
+        }
+
+        function awardTokens(amount) {
+            if (!currentUser) return;
+            walletBalance += amount;
+            localStorage.setItem('gk_balance', walletBalance);
+            const balLabel = document.getElementById('nav-wallet-balance');
+            if (balLabel) {
+                balLabel.innerText = `${walletBalance} GK`;
+                balLabel.classList.add('scale-110', 'text-white');
+                setTimeout(() => balLabel.classList.remove('scale-110', 'text-white'), 1000);
+            }
+        }
+
+
+        /* --- UPGRADED AI PROCESSOR MODULE --- */
+
+        async function ensureModelLoaded() {
+            if (!aiModel) {
+                loadingOverlay.classList.remove('hidden');
+                aiModel = await mobilenet.load();
+                loadingOverlay.classList.add('hidden');
+            }
+        }
 
         async function initiateCamera() {
-            loadingOverlay.classList.remove('hidden');
+            await ensureModelLoaded();
             try {
-                // Instantiates MobileNet image classification model inside browser execution threads
-                if (!aiModel) {
-                    aiModel = await mobilenet.load();
-                }
-                
+                // Remove static image view setups
+                staticPreview.classList.add('hidden');
+                if (activeInputStream === 'webcam') return;
+
                 const streams = await navigator.mediaDevices.getUserMedia({ 
                     video: { facingMode: 'environment' }, 
                     audio: false 
@@ -538,50 +827,149 @@
                 videoElement.classList.remove('hidden');
                 placeholder.classList.add('hidden');
                 validateBtn.disabled = false;
+                activeInputStream = 'webcam';
             } catch (err) {
-                alert("Camera initialization failed: Please grant hardware stream access privileges.");
+                alert("Camera initialization failed: Please grant camera hardware permissions or use the upload alternative.");
                 console.error(err);
-            } finally {
-                loadingOverlay.classList.add('hidden');
             }
+        }
+
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            await ensureModelLoaded();
+
+            // Deactivate webcam if active
+            if (videoElement.srcObject) {
+                const tracks = videoElement.srcObject.getTracks();
+                tracks.forEach(track => track.stop());
+                videoElement.srcObject = null;
+            }
+            videoElement.classList.add('hidden');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                staticPreview.src = e.target.result;
+                staticPreview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                
+                // Create native HTMLImageElement target structure for model consumption
+                uploadedImageElement = new Image();
+                uploadedImageElement.src = e.target.result;
+                uploadedImageElement.onload = function() {
+                    validateBtn.disabled = false;
+                    activeInputStream = 'upload';
+                }
+            }
+            reader.readAsDataURL(file);
         }
 
         async function runAIValidation() {
             if (!aiModel) return;
             
             resultBox.classList.remove('hidden');
-            badge.className = "inline-block text-xs font-bold uppercase px-3 py-1 rounded-full bg-gray-600 text-white";
-            badge.innerText = "Analyzing Frames...";
+            badge.className = "text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-brandYellow text-black animate-pulse";
+            badge.innerText = "Analyzing Frame...";
+            topCandidatesContainer.innerHTML = '';
 
-            // Extracts single video frame canvas matrix array to test against deep learning classifiers
-            const predictions = await aiModel.classify(videoElement);
+            let predictions = [];
             
-            if (predictions && predictions.length > 0) {
-                const primaryMatch = predictions[0];
-                const cleanName = primaryMatch.className.toLowerCase();
-                const scorePercentage = Math.round(primaryMatch.probability * 100);
-
-                objectLabel.innerText = primaryMatch.className.split(',')[0];
-                scoreLabel.innerText = scorePercentage + "%";
-
-                // Evaluates object properties against sorting classifications
-                let isDry = dryRecyclables.some(keyword => cleanName.includes(keyword));
-                let isWet = wetOrganics.some(keyword => cleanName.includes(keyword));
-
-                if (isDry) {
-                    badge.className = "inline-block text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500 text-black";
-                    badge.innerText = "VALIDATED: Correctly Sorted Dry Recyclable";
-                } else if (isWet) {
-                    badge.className = "inline-block text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500 text-black";
-                    badge.innerText = "VALIDATED: Correctly Sorted Wet Organic";
-                } else {
-                    badge.className = "inline-block text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500 text-white";
-                    badge.innerText = "FAILED: Unidentified / Mix Material Detected";
+            try {
+                if (activeInputStream === 'webcam') {
+                    predictions = await aiModel.classify(videoElement);
+                } else if (activeInputStream === 'upload' && uploadedImageElement) {
+                    predictions = await aiModel.classify(uploadedImageElement);
                 }
-            } else {
-                badge.className = "inline-block text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500 text-white";
-                badge.innerText = "ERROR: Frame scanning context lost.";
+
+                if (predictions && predictions.length > 0) {
+                    processMultiClassPredictions(predictions);
+                } else {
+                    displayErrorStatus("Frame Context Lost");
+                }
+            } catch (err) {
+                console.error("Inference Error: ", err);
+                displayErrorStatus("Inference Aborted");
             }
+        }
+
+        // Expanded logic evaluates multiple returned prediction arrays rather than just a single key match
+        function processMultiClassPredictions(predictions) {
+            let primaryMatch = predictions[0];
+            let topCleanName = primaryMatch.className.toLowerCase();
+            let primaryScore = Math.round(primaryMatch.probability * 100);
+
+            objectLabel.innerText = primaryMatch.className.split(',')[0];
+            scoreLabel.innerText = primaryScore + "%";
+
+            // Map and display diagnostic list candidates
+            predictions.forEach((pred, index) => {
+                const percentage = Math.round(pred.probability * 100);
+                const itemLabel = pred.className.split(',')[0];
+                
+                const pill = document.createElement('div');
+                pill.className = "flex justify-between items-center";
+                pill.innerHTML = `
+                    <span>Candidate ${index + 1}: ${itemLabel}</span>
+                    <span class="font-mono text-xs">${percentage}%</span>
+                `;
+                topCandidatesContainer.appendChild(pill);
+            });
+
+            // Evaluation Matrix Loop: checks all top 3 matches to see if any contain our waste signatures
+            let categoryAssigned = 'unknown';
+            let matchedKeyword = '';
+
+            for (let i = 0; i < predictions.length; i++) {
+                const checkString = predictions[i].className.toLowerCase();
+                
+                // Check Dry Recyclables matches
+                const dryFound = dryRecyclables.find(kw => checkString.includes(kw));
+                if (dryFound) {
+                    categoryAssigned = 'dry';
+                    matchedKeyword = dryFound;
+                    break;
+                }
+
+                // Check Wet Organic matches
+                const wetFound = wetOrganics.find(kw => checkString.includes(kw));
+                if (wetFound) {
+                    categoryAssigned = 'wet';
+                    matchedKeyword = wetFound;
+                    break;
+                }
+
+                // Check Hazardous Waste matches
+                const hazFound = hazardousWaste.find(kw => checkString.includes(kw));
+                if (hazFound) {
+                    categoryAssigned = 'hazardous';
+                    matchedKeyword = hazFound;
+                    break;
+                }
+            }
+
+            // Assign status details on assessment cards
+            if (categoryAssigned === 'dry') {
+                badge.className = "text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-500 text-black";
+                badge.innerText = `VALIDATED: Sorted Dry Recyclable [kw: ${matchedKeyword}]`;
+                awardTokens(10); // Reward active connected wallet balance
+            } else if (categoryAssigned === 'wet') {
+                badge.className = "text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-amber-500 text-black";
+                badge.innerText = `VALIDATED: Sorted Wet Organic [kw: ${matchedKeyword}]`;
+                awardTokens(10);
+            } else if (categoryAssigned === 'hazardous') {
+                badge.className = "text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-red-400 text-black";
+                badge.innerText = `VALIDATED: Hazardous E-Waste [kw: ${matchedKeyword}]`;
+                awardTokens(15);
+            } else {
+                badge.className = "text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-yellow-600 text-white";
+                badge.innerText = "FAILED: Ambiguous / Mixed Material Profile";
+            }
+        }
+
+        function displayErrorStatus(msg) {
+            badge.className = "text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-red-600 text-white";
+            badge.innerText = `ERROR: ${msg}`;
         }
     </script>
 </body>
